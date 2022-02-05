@@ -19,7 +19,7 @@ docker-compose build
 ```
 
 NOTE: If you are running Linux and encounter permission errors using the above,
-try running `sudo chown -R $USER:$USER` and re-run the build command.
+try running `sudo chown -R $USER:$USER .` and re-run the build command.
 
 Then, spin up the application:
 
