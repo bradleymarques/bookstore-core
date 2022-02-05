@@ -24,10 +24,16 @@ try running `sudo chown -R $USER:$USER .` and re-run the build command.
 We then need to create the database. Do this by running:
 
 ```sh
-docker-compose run -e "RAILS_ENV=development" web rake db:drop db:create db:migrate && rake db:seed
+docker-compose run -e "RAILS_ENV=development" web rake db:drop db:create db:migrate
 ```
 
-This will drop, create, and migrate the "development" database as well as seeding with sample data.
+This will drop, create, and migrate the "development" database.
+
+To seed the database with sample data, run:
+
+```sh
+docker-compose run -e "RAILS_ENV=development" web rake db:seed
+```
 
 Then, spin up the application:
 
