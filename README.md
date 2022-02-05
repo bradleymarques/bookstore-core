@@ -34,3 +34,17 @@ manually interact with the API.
 
 Please see the LaTeX documentation in the `documentation/` folder for details
 on the API endpoints.
+
+## Running Tests
+
+To run the test suite, first create the test database:
+
+```sh
+docker-compose run -e "RAILS_ENV=test" web rake db:create db:migrate
+```
+
+Then run all tests:
+
+```sh
+docker-compose run -e "RAILS_ENV=test" web rails test
+```
