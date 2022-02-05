@@ -1,0 +1,100 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=1in]{geometry} % full-width
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{graphicx, color}
+
+\title{Online Bookstore JSON API}
+\author{Bradley Marques}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+\begin{abstract}
+	TODO
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+TODO
+
+\section{Problem Analysis}
+
+\subsection{Domain}
+
+The domain contains the following models:
+
+\begin{itemize}
+  \item User - (a.k.a. Author) the user of the system. Has API credentials.
+  \item API Credentials - decomposed from user (see justification later).
+  \item Book - a Book that an Author has written and wishes to self-publish.
+\end{itemize}
+
+\subsection{Models and Database design}
+
+Some notes:
+
+\begin{itemize}
+  \item To prevent database walking and therefore increase application security,
+  universally unique identifiers (uuids) are used instead of sequential database
+  ids
+  \item API Credentials are decoupled from Users. Benefits of doing so include ...
+\end{itemize}
+
+\subsection{API Endpoints}
+
+\subsection{Assumptions Made}
+
+The following assumptions are made for the purposes of the proof-of-concept:
+
+\begin{itemize}
+  \item There is a mandatory 1:1 relationship between a User and an API Credential.
+  \item There is a 1:many relationship between a User and Books (i.e. Books cannot have multiple Authors).
+  \item Book prices are in United States of America Dollar (USD).
+\end{itemize}
+
+\section{Choice of Technology}
+
+The list below summarizes the choice of technology used and gives a brief
+justification for each choice:
+
+\begin{itemize}
+  \item \textbf{Containerization}: Docker.
+  \item \textbf{Framework}: \href{https://rubyonrails.org/}{Ruby on Rails 7.0.1}: chosen for familiarity and therefore speed of development.
+  \item \textbf{API standard/specification}: \href{https://jsonapi.org/}{JSON API}: gold-standard for JSON API responses.
+  \item \textbf{Database}: \href{https://www.postgresql.org/}{PostgreSQL}: powerful and feature-rich open-source relational database
+\end{itemize}
+
+Rails specific gems used:
+
+\begin{itemize}
+  \item \textbf{Authentication}: JWT as specified by brief as well as \href{https://github.com/heartcombo/devise}{Devise}.
+  \item \textbf{Authorization}: \href{https://github.com/varvet/pundit}{Pundit} - gem for simple OOP authorization.
+  \item ...etc
+\end{itemize}
+
+\section{Technical Trade-offs and Future Work}
+
+\begin{itemize}
+  \item Monolithic Application
+  \item Multi-author books
+  \item Bookstore as a model
+  \item \textbf{Introduce User roles} - at the moment, a User is by default an Author. However, as
+  the system grew, it would be prudent to add the idea of a ``role'' such that
+  users could be admins to manage the system, bookstore owners to manage stock,
+  etc.
+\end{itemize}
+
+\section{Conclusion}
+
+TODO
+
+\end{document}
