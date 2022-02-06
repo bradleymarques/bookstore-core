@@ -3,12 +3,15 @@ require "test_helper"
 class UserTest < ActiveSupport::TestCase
   test "a user has to have a non-nil username" do
     user = FactoryBot.build(:user, username: nil)
+
     refute(user.valid?)
   end
 
   test "a user is valid and can be saved with a username" do
     username = "billybob@example.com"
+
     user = FactoryBot.build(:user, username: username)
+
     assert(user.valid?)
     assert(user.save)
   end
