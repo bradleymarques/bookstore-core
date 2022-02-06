@@ -116,7 +116,7 @@ module Api
         user = FactoryBot.create(:user)
 
         params = {
-            book: {
+          book: {
             title: "My new Book",
             description: "This is my latest book...",
             price_usd: 5.0
@@ -131,7 +131,7 @@ module Api
         user = FactoryBot.create(:user)
 
         params = {
-            book: {
+          book: {
             title: "My new Book",
             description: "This is my latest book...",
             price_usd: 5.0
@@ -146,6 +146,22 @@ module Api
         )
 
         assert_response(:created)
+      end
+
+      test "an unauthenticated user cannot #update a Book even if they own it" do
+        user = FactoryBot.create(:user)
+        book = FactoryBot.create(:book, user: user)
+
+        params = {
+          book: {
+            title: "Updated title",
+            description: "Updated description...",
+            price_usd: 5.0
+          }
+        }
+
+        patch(api_v1_book_path(book), params: params, as: :json)
+        assert_response(:forbidden)
       end
 
       private

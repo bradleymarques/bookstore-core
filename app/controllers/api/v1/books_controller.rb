@@ -28,7 +28,7 @@ module Api
       def create
         respond_to do |format|
           format.json do
-            book = Book.new(create_params.merge({ user: current_user }))
+            book = Book.new(create_and_update_params.merge({ user: current_user }))
 
             if book.save
               serializer = BookSerializer.new(book)
@@ -40,9 +40,24 @@ module Api
         end
       end
 
+      def update
+        respond_to do |format|
+          format.json do
+            book = Book.find(params.require(:id))
+
+            if book.update(create_and_update_params)
+              serializer = BookSerializer.new(book)
+              render(status: :ok, json: serializer.serializable_hash)
+            else
+              # TODO: Handle error case
+            end
+          end
+        end
+      end
+
       private
 
-      def create_params
+      def create_and_update_params
         params.require(:book).permit(:title, :description, :price_usd)
       end
     end
