@@ -2,7 +2,14 @@ class ApplicationController < ActionController::Base
   AUTH_HEADER = "HTTP_AUTHORIZATION"
   BEARER = "Bearer "
 
+  include Pundit
+  after_action :verify_authorized
+
   private
+
+  def forbidden_access
+    head(:forbidden)
+  end
 
   def current_user
     token = get_token(request.headers[AUTH_HEADER])

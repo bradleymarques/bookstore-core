@@ -164,6 +164,51 @@ module Api
         assert_response(:forbidden)
       end
 
+      test "an authenticated user cannot #update a Book that they do not own" do
+        user = FactoryBot.create(:user)
+        another_user = FactoryBot.create(:user)
+        book = FactoryBot.create(:book, user: another_user)
+
+        params = {
+          book: {
+            title: "Updated title",
+            description: "Updated description...",
+            price_usd: 5.0
+          }
+        }
+
+        patch(
+          api_v1_book_path(book),
+          params: params,
+          as: :json,
+          headers: authentication_header(user)
+        )
+
+        assert_response(:forbidden)
+      end
+
+      test "an authenticated user can #update a Book that they own" do
+        user = FactoryBot.create(:user)
+        book = FactoryBot.create(:book, user: user)
+
+        params = {
+          book: {
+            title: "Updated title",
+            description: "Updated description...",
+            price_usd: 5.0
+          }
+        }
+
+        patch(
+          api_v1_book_path(book),
+          params: params,
+          as: :json,
+          headers: authentication_header(user)
+        )
+
+        assert_response(:ok)
+      end
+
       private
 
       def authentication_header(user, expiry_time_minutes = 5)

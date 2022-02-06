@@ -3,9 +3,13 @@ module Api
     class BooksController < ApplicationController
       before_action :require_jwt, except: [:index, :show]
 
+      rescue_from "Pundit::NotAuthorizedError", with: :forbidden_access
+
       def index
         respond_to do |format|
           format.json do
+            authorize(Book)
+
             books = Book.all.order(:title)
             serializer = BookSerializer.new(books)
 
@@ -18,6 +22,8 @@ module Api
         respond_to do |format|
           format.json do
             book = Book.find(params.require(:id))
+            authorize(book)
+
             serializer = BookSerializer.new(book)
 
             render(status: :ok, json: serializer.serializable_hash)
@@ -29,6 +35,7 @@ module Api
         respond_to do |format|
           format.json do
             book = Book.new(create_and_update_params.merge({ user: current_user }))
+            authorize(book)
 
             if book.save
               serializer = BookSerializer.new(book)
@@ -44,6 +51,7 @@ module Api
         respond_to do |format|
           format.json do
             book = Book.find(params.require(:id))
+            authorize(book)
 
             if book.update(create_and_update_params)
               serializer = BookSerializer.new(book)
