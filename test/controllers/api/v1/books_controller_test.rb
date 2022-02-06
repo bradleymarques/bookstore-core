@@ -111,6 +111,60 @@ module Api
 
         assert_equal(expected_payload, actual_payload)
       end
+
+      test "an unauthenticated user cannot #create a new Book" do
+        user = FactoryBot.create(:user)
+
+        params = {
+            book: {
+            title: "My new Book",
+            description: "This is my latest book...",
+            price_usd: 5.0
+          }
+        }
+
+        post(api_v1_books_path, params: params, as: :json)
+        assert_response(:forbidden)
+      end
+
+      test "an authenticated user can #create a new Book" do
+        user = FactoryBot.create(:user)
+
+        params = {
+            book: {
+            title: "My new Book",
+            description: "This is my latest book...",
+            price_usd: 5.0
+          }
+        }
+
+        post(
+          api_v1_books_path,
+          params: params,
+          as: :json,
+          headers: authentication_header(user)
+        )
+
+        assert_response(:created)
+      end
+
+      private
+
+      def authentication_header(user, expiry_time_minutes = 5)
+        payload = {
+          "iss": "melio.ai",
+          "exp": expiry_time_minutes.minutes.from_now.to_i,
+          "username": user.username,
+        }
+
+        encoded_header = JWT.encode(
+          payload,
+          Rails.application.credentials.jwt_secret,
+          "HS256"
+        )
+
+        { ApplicationController::AUTH_HEADER => encoded_header }
+      end
     end
   end
 end
