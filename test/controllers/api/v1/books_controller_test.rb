@@ -213,7 +213,7 @@ module Api
 
       def authentication_header(user, expiry_time_minutes = 5)
         payload = {
-          "iss": "melio.ai",
+        "iss": "melio.ai",
           "exp": expiry_time_minutes.minutes.from_now.to_i,
           "username": user.username,
         }

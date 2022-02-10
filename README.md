@@ -6,59 +6,73 @@ More detailed LaTeX documentation can be found in the `documentation/` folder.
 
 ## Running the application
 
-First clone the repository:
+# Installing and Running Code Submission
+
+Remove existing repository, if applicable:
+
+```sh
+sudo rm -rf bookstore-core
+```
+
+Clone project:
 
 ```sh
 git clone git@github.com:bradleymarques/bookstore-core.git
 ```
 
-Build the project using `docker-compose`:
+Build project:
 
 ```sh
-docker-compose build
+cd bookstore-core
+docker-compose down
+sudo chown -R $USER:$USER . # This step seems to be required on Linux
 ```
 
-NOTE: If you are running Linux and encounter permission errors using the above,
-try running `sudo chown -R $USER:$USER .` and re-run the build command.
-
-We then need to create the database. Do this by running:
-
-```sh
-docker-compose run -e "RAILS_ENV=development" web rake db:drop db:create db:migrate
-```
-
-This will drop, create, and migrate the "development" database.
-
-To seed the database with sample data, run:
-
-```sh
-docker-compose run -e "RAILS_ENV=development" web rake db:seed
-```
-
-Then, spin up the application:
-
-```sh
-docker-compose up
-```
-
-The application is now running on `localhost:3000`.
-
-An application such as [Postman](https://www.postman.com/) can be used to
-manually interact with the API.
-
-Please see the LaTeX documentation in the `documentation/` folder for details
-on the API endpoints.
-
-## Running Tests
-
-To run the test suite, first create the test database:
+Attempt to run the tests:
 
 ```sh
 docker-compose run -e "RAILS_ENV=test" web rake db:create db:migrate
 ```
 
-Then run all tests:
+If that results in a Postgres permission issue follow the steps
+[here](https://github.com/sameersbn/docker-postgresql/issues/112), namely:
+
+```sh
+docker ps
+docker exec -it <hash> bash
+psql username=postgres
+ALTER ROLE postgres WITH PASSWORD 'password';
+\q
+exit
+docker-compose run -e "RAILS_ENV=test" web rake db:create db:migrate
+```
+
+If some tests fail, it is because a `jwt_secret` is not set. Generate credentials:
+
+```sh
+rm config/credentials.yml.enc
+EDITOR="vim --wait" bin/rails credentials:edit
+```
+
+Add the following:
+
+```txt
+jwt_secret: <some_string>
+```
+
+Save and exit.
+
+Run tests:
 
 ```sh
 docker-compose run -e "RAILS_ENV=test" web rails test
 ```
+
+Run server:
+
+```sh
+docker-compose run -e "RAILS_ENV=development" web rake db:drop db:create db:migrate db:seed
+docker-compose up
+```
+
+Visit: `http://localhost:3000/api/v1/books.json`
