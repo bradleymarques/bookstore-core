@@ -8,8 +8,8 @@ default: &default
 
 development:
   <<: *default
-  database: myapp_development
+  database: bookstore_core_development
 
 test:
   <<: *default
-  database: myapp_test
+  database: bookstore_core_test
